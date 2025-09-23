@@ -1,0 +1,9 @@
+{
+  "articles": [
+    {
+      "title": "test",
+      "date": "2025-01-01",
+      "content": "This is a test"
+    }
+  ]
+}
