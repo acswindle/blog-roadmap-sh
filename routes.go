@@ -7,5 +7,10 @@ func (app application) HomeHandle(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	app.ExecuteTemplate("home.tmpl.html", nil, w)
+	data := TemplateData{
+		&app.articles,
+		"Home",
+		nil,
+	}
+	app.ExecuteTemplate("home.tmpl.html", data, w)
 }

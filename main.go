@@ -9,9 +9,9 @@ import (
 )
 
 type Article struct {
-	Title   string `json:"title"`
-	Date    string `json:"date"`
-	Content string `json:"content"`
+	Title   string
+	Date    string
+	Content string
 }
 
 type Articles []Article

@@ -7,6 +7,12 @@ import (
 	"path/filepath"
 )
 
+type TemplateData struct {
+	Articles *Articles
+	Title    string
+	Errors   []error
+}
+
 type templates map[string]*template.Template
 
 func (app *application) RefreshTemplates() error {
@@ -14,9 +20,13 @@ func (app *application) RefreshTemplates() error {
 	if err != nil {
 		return err
 	}
+	base := filepath.Join(app.templateDir, "base.tmpl.html")
 	for _, file := range files {
 		name := filepath.Base(file)
-		app.templates[name], err = template.ParseFiles(file)
+		if name == "base.tmpl.html" {
+			continue
+		}
+		app.templates[name], err = template.ParseFiles(base, file)
 		fmt.Println(name)
 		if err != nil {
 			return err
@@ -25,7 +35,7 @@ func (app *application) RefreshTemplates() error {
 	return nil
 }
 
-func (app application) ExecuteTemplate(name string, data any, w http.ResponseWriter) {
+func (app application) ExecuteTemplate(name string, data TemplateData, w http.ResponseWriter) {
 	tmpl, present := app.templates[name]
 	if !present {
 		http.Error(w, "failed loading home page", http.StatusInternalServerError)

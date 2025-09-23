@@ -1,12 +1,10 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Personal Blog</title>
-    <link href="/static/style.css" rel="stylesheet" />
-  </head>
-  <body>
-    <h1>Test Page</h1>
-  </body>
-</html>
+{{define "content"}}
+<p>
+  This is a test personal blog for completing this
+  <a href="https://roadmap.sh/projects/personal-blog">roadmap.sh challenge</a>.
+</p>
+<h2>Articles</h2>
+{{range .Articles}}
+<h3><a>{{.Title}}</a></h3>
+<p>{{.Date}}</p>
+{{end}} {{end}}
