@@ -7,10 +7,15 @@ import (
 	"path/filepath"
 )
 
+type ArticleForm struct {
+	Article
+	Errors []error
+}
+
 type TemplateData struct {
-	Articles *Articles
-	Title    string
-	Errors   []error
+	Articles  *Articles
+	PageTitle string
+	ArticleForm
 }
 
 type templates map[string]*template.Template
@@ -42,6 +47,6 @@ func (app application) ExecuteTemplate(name string, data TemplateData, w http.Re
 	}
 	err := tmpl.Execute(w, data)
 	if err != nil {
-		http.Error(w, "failed loading home page", http.StatusInternalServerError)
+		fmt.Printf("error loading page %v", err)
 	}
 }

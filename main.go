@@ -62,6 +62,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", app.HomeHandle)
+	mux.HandleFunc("GET /article/{idx}", app.ArticleHandle)
 
 	if err := http.ListenAndServe(
 		":9090",
