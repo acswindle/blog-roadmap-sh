@@ -4,7 +4,7 @@
   <a href="https://roadmap.sh/projects/personal-blog">roadmap.sh challenge</a>.
 </p>
 <h2>Articles</h2>
-{{range $idx, $article := .Articles}}
-<h3><a href="/article/{{$idx}}">{{$article.Title}}</a></h3>
-<p>{{$article.Date}}</p>
+{{range .Data}}
+<h3><a href="/article/{{.ID}}">{{.Title}}</a></h3>
+<p>{{.Date}}</p>
 {{end}} {{end}}

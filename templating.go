@@ -13,9 +13,8 @@ type ArticleForm struct {
 }
 
 type TemplateData struct {
-	Articles  *Articles
+	Data      any
 	PageTitle string
-	ArticleForm
 }
 
 type templates map[string]*template.Template

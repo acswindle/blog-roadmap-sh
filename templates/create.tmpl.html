@@ -1,0 +1,16 @@
+{{define "content"}}
+{{with .Data}}
+<form method="post" action="/article/create" >
+<label for="title"> Title </label>
+  <input name="title" value="{{.Title}}"></input>
+<label for="content">Content</label>
+<textarea rows="15" cols="45" name="content">
+    {{.Content}}
+</textarea>
+<input type="submit">Submit</input>
+</form>
+{{range .Errors}}
+<p>{{.}}</p>
+{{end}}
+{{end}}
+{{end}}

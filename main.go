@@ -1,67 +1,52 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
+	"database/sql"
 	"log"
 	"net/http"
-	"os"
+	"time"
 )
 
 type Article struct {
+	ID      int
 	Title   string
-	Date    string
+	Date    time.Time
 	Content string
 }
 
 type Articles []Article
 
-func (app *application) LoadArticles() {
-	file, err := os.Open("./metadata.json")
-	if err != nil {
-		log.Fatalf("could not load metadata file: %v", err)
-	}
-	wrapper := map[string]Articles{}
-	err = json.NewDecoder(file).Decode(&wrapper)
-	if err != nil {
-		log.Fatalf("could not decode metadata file %v", err)
-	}
-	var present bool
-	app.articles, present = wrapper["articles"]
-	if !present {
-		log.Fatal("could not unwrap json file")
-	}
-	fmt.Printf("decoded json %v\n", app.articles)
-}
-
 type application struct {
 	templateDir string
 	templates   templates
-	articles    Articles
+	db          *sql.DB
 }
 
 func NewApp(templateDir string) (*application, error) {
+	db := NewDB()
 	app := application{
 		templateDir,
 		make(templates),
-		Articles{},
+		db,
 	}
 	err := app.RefreshTemplates()
 	if err != nil {
 		return nil, err
 	}
-	app.LoadArticles()
 	return &app, nil
 }
 
 func main() {
 	app, err := NewApp("./templates/")
+	defer app.db.Close()
 	if err != nil {
 		log.Fatalf("could not load templates %v", err)
 	}
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", app.HomeHandle)
+	mux.HandleFunc("GET /article/create", app.CreateArticleHandle)
+	mux.HandleFunc("POST /article/create", app.PostArticleHandle)
 	mux.HandleFunc("GET /article/{idx}", app.ArticleHandle)
 
 	if err := http.ListenAndServe(
