@@ -24,14 +24,24 @@ func (app application) HomeHandle(w http.ResponseWriter, r *http.Request) {
 	app.ExecuteTemplate("home.tmpl.html", data, w)
 }
 
-func (app application) ArticleHandle(w http.ResponseWriter, r *http.Request) {
+func (app *application) GetRequestArticle(w http.ResponseWriter, r *http.Request) (Article, bool) {
 	idx, err := strconv.Atoi(r.PathValue("idx"))
 	if err != nil {
 		http.Error(w, "bad article value", http.StatusBadRequest)
+		return Article{}, false
 	}
 	article, err := app.GetArticle(idx)
 	if err != nil {
 		http.Error(w, "could not find article", http.StatusInternalServerError)
+		return Article{}, false
+	}
+	return article, true
+}
+
+func (app application) ArticleHandle(w http.ResponseWriter, r *http.Request) {
+	article, ok := app.GetRequestArticle(w, r)
+	if !ok {
+		return
 	}
 	data := TemplateData{
 		article,
@@ -47,6 +57,21 @@ func (app application) CreateArticleHandle(w http.ResponseWriter, r *http.Reques
 			Errors:  []error{},
 		},
 		"Create Article",
+	}
+	app.ExecuteTemplate("create.tmpl.html", data, w)
+}
+
+func (app application) EditArticleHandle(w http.ResponseWriter, r *http.Request) {
+	article, ok := app.GetRequestArticle(w, r)
+	if !ok {
+		return
+	}
+	data := TemplateData{
+		ArticleForm{
+			Article: article,
+			Errors:  []error{},
+		},
+		"Edit Article",
 	}
 	app.ExecuteTemplate("create.tmpl.html", data, w)
 }
