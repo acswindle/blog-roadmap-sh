@@ -1,5 +1,5 @@
 {{define "content"}} {{with .Data}}
 <h1>{{.Title}}</h1>
-<p>{{.Date}}</p>
+<p>{{.Date.Format "02 Jan 06 15:04 MST"}}</p>
 <p>{{.Content}}</p>
 {{end}} {{end}}

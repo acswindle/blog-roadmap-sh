@@ -45,9 +45,11 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", app.HomeHandle)
+	mux.Handle("GET /admin", BasicAuth(http.HandlerFunc(app.AdminHandle)))
 	mux.Handle("GET /article/create", BasicAuth(http.HandlerFunc(app.CreateArticleHandle)))
 	mux.Handle("POST /article/create", BasicAuth(http.HandlerFunc(app.PostArticleHandle)))
-	mux.Handle("POST /article/{idx}/edit", BasicAuth(http.HandlerFunc(app.ArticleHandle)))
+	mux.Handle("POST /article/{idx}/delete", BasicAuth(http.HandlerFunc(app.DeleteArticleHandle)))
+	mux.Handle("POST /article/{idx}/edit", BasicAuth(http.HandlerFunc(app.EditArticlePostHandle)))
 	mux.Handle("GET /article/{idx}/edit", BasicAuth(http.HandlerFunc(app.EditArticleHandle)))
 	mux.HandleFunc("GET /article/{idx}", app.ArticleHandle)
 

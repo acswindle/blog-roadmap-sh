@@ -37,6 +37,23 @@ func (app *application) AddArticle(article Article) error {
 	return err
 }
 
+func (app *application) DeleteArticle(id int) error {
+	result, err := app.db.Exec(`
+		delete from Articles where id = ?;
+		`, id)
+	if err != nil {
+		return err
+	}
+	num, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if num != 1 {
+		return fmt.Errorf("deleted %d records", num)
+	}
+	return nil
+}
+
 func (app *application) UpdateArticle(article Article) error {
 	_, err := app.db.Exec(`
 		update Articles

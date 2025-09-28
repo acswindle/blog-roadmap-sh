@@ -24,6 +24,19 @@ func (app application) HomeHandle(w http.ResponseWriter, r *http.Request) {
 	app.ExecuteTemplate("home.tmpl.html", data, w)
 }
 
+func (app application) AdminHandle(w http.ResponseWriter, r *http.Request) {
+	articles, err := app.GetArticles()
+	if err != nil {
+		http.Error(w, "could not query articles", http.StatusInternalServerError)
+		return
+	}
+	data := TemplateData{
+		&articles,
+		"Admin",
+	}
+	app.ExecuteTemplate("admin.tmpl.html", data, w)
+}
+
 func (app *application) GetRequestArticle(w http.ResponseWriter, r *http.Request) (Article, bool) {
 	idx, err := strconv.Atoi(r.PathValue("idx"))
 	if err != nil {
@@ -129,4 +142,17 @@ func (app *application) EditArticlePostHandle(w http.ResponseWriter, r *http.Req
 		return
 	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func (app *application) DeleteArticleHandle(w http.ResponseWriter, r *http.Request) {
+	idx, err := strconv.Atoi(r.PathValue("idx"))
+	if err != nil {
+		http.Error(w, "invalid article id in path", http.StatusBadRequest)
+		return
+	}
+	if err = app.DeleteArticle(idx); err != nil {
+		http.Error(w, fmt.Sprintf("error deleting article %v", err), http.StatusBadRequest)
+		return
+	}
+	http.Redirect(w, r, "/admin", http.StatusSeeOther)
 }

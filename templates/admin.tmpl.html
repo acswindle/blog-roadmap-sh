@@ -1,0 +1,19 @@
+{{define "content"}}
+<p>
+  This is a test personal blog for completing this
+  <a href="https://roadmap.sh/projects/personal-blog">roadmap.sh challenge</a>.
+</p>
+<form method="get" action="/article/create">
+  <input type="submit" value="New" />
+</form>
+<h2>Articles</h2>
+{{range .Data}}
+<h3>{{.Title}}</h3>
+<time>{{.Date.Format "02 Jan 06 15:04 MST" }}</time>
+<form method="get" action="/article/{{.ID}}/edit">
+  <input type="submit" value="Edit" />
+</form>
+<form method="post" action="/article/{{.ID}}/delete">
+  <input type="submit" value="Delete" />
+</form>
+{{end}} {{end}}
