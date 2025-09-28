@@ -73,7 +73,7 @@ func (app application) EditArticleHandle(w http.ResponseWriter, r *http.Request)
 		},
 		"Edit Article",
 	}
-	app.ExecuteTemplate("create.tmpl.html", data, w)
+	app.ExecuteTemplate("edit.tmpl.html", data, w)
 }
 
 func (form *ArticleForm) NonEmptyString(input *string, key string, r *http.Request) {
@@ -84,22 +84,49 @@ func (form *ArticleForm) NonEmptyString(input *string, key string, r *http.Reque
 	}
 }
 
-func (app *application) PostArticleHandle(w http.ResponseWriter, r *http.Request) {
+func (app *application) CheckArticleForm(w http.ResponseWriter, r *http.Request, webpage string) (*ArticleForm, bool) {
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, "error parsing form", http.StatusBadRequest)
-		return
+		return &ArticleForm{}, false
 	}
 	form := ArticleForm{}
 	form.NonEmptyString(&form.Title, "title", r)
 	form.NonEmptyString(&form.Content, "content", r)
 	if len(form.Errors) > 0 {
-		fmt.Printf("error with field %v", form.Errors)
-		app.ExecuteTemplate("create.tmpl.html", TemplateData{form, "Create Article"}, w)
+		app.ExecuteTemplate(webpage, TemplateData{form, "Create Article"}, w)
+		return &ArticleForm{}, false
+	}
+	return &form, true
+}
+
+func (app *application) PostArticleHandle(w http.ResponseWriter, r *http.Request) {
+	form, ok := app.CheckArticleForm(w, r, "create.tmpl.html")
+	if !ok {
 		return
 	}
 	err := app.AddArticle(form.Article)
 	if err != nil {
 		http.Error(w, "error adding article", http.StatusBadRequest)
+	}
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func (app *application) EditArticlePostHandle(w http.ResponseWriter, r *http.Request) {
+	idx, err := strconv.Atoi(r.PathValue("idx"))
+	if err != nil {
+		http.Error(w, "invalid article id in path", http.StatusBadRequest)
+		return
+	}
+	form, ok := app.CheckArticleForm(w, r, "edit.tmpl.html")
+	if !ok {
+		return
+	}
+	form.ID = idx
+	err = app.UpdateArticle(form.Article)
+	if err != nil {
+		fmt.Printf("error editing artilce %v", err)
+		http.Error(w, "error editing article", http.StatusBadRequest)
+		return
 	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

@@ -47,7 +47,8 @@ func main() {
 	mux.HandleFunc("/", app.HomeHandle)
 	mux.Handle("GET /article/create", BasicAuth(http.HandlerFunc(app.CreateArticleHandle)))
 	mux.Handle("POST /article/create", BasicAuth(http.HandlerFunc(app.PostArticleHandle)))
-	mux.HandleFunc("GET /article/{idx}/edit", app.EditArticleHandle)
+	mux.Handle("POST /article/{idx}/edit", BasicAuth(http.HandlerFunc(app.EditArticlePostHandle)))
+	mux.Handle("GET /article/{idx}/edit", BasicAuth(http.HandlerFunc(app.EditArticleHandle)))
 	mux.HandleFunc("GET /article/{idx}", app.ArticleHandle)
 
 	if err := http.ListenAndServe(

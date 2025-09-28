@@ -1,6 +1,6 @@
 {{define "content"}}
 {{with .Data}}
-<form method="post" action="/article/create" style="max-width: 400px; justify-content: center;">
+<form method="post" action="/article/{{.ID}}/edit" style="max-width: 400px; justify-content: center;">
 <label for="title"> Title </label>
   <input name="title" value="{{.Title}}"></input>
 <label for="content">Content</label>

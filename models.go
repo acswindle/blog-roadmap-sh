@@ -37,6 +37,17 @@ func (app *application) AddArticle(article Article) error {
 	return err
 }
 
+func (app *application) UpdateArticle(article Article) error {
+	_, err := app.db.Exec(`
+		update Articles
+		set title = ?,
+		content = ?
+		where id = ?
+		;
+		`, article.Title, article.Content, article.ID)
+	return err
+}
+
 func (app *application) GetArticles() (Articles, error) {
 	rows, err := app.db.Query(`
 		select id, title, date, content 
@@ -46,6 +57,7 @@ func (app *application) GetArticles() (Articles, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 	articles := []Article{}
 	for rows.Next() {
 		article := Article{}
@@ -73,6 +85,7 @@ func (app *application) GetArticle(id int) (Article, error) {
 	if err != nil {
 		return Article{}, nil
 	}
+	defer rows.Close()
 	if hasNext := rows.Next(); !hasNext {
 		return Article{}, fmt.Errorf("no article with specified id %d", id)
 	}
