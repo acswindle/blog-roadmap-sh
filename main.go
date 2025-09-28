@@ -38,16 +38,16 @@ func NewApp(templateDir string) (*application, error) {
 
 func main() {
 	app, err := NewApp("./templates/")
-	defer app.db.Close()
 	if err != nil {
-		log.Fatalf("could not load templates %v", err)
+		log.Fatalf("could not load app %v", err)
 	}
+	defer app.db.Close()
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", app.HomeHandle)
 	mux.Handle("GET /article/create", BasicAuth(http.HandlerFunc(app.CreateArticleHandle)))
 	mux.Handle("POST /article/create", BasicAuth(http.HandlerFunc(app.PostArticleHandle)))
-	mux.Handle("POST /article/{idx}/edit", BasicAuth(http.HandlerFunc(app.EditArticlePostHandle)))
+	mux.Handle("POST /article/{idx}/edit", BasicAuth(http.HandlerFunc(app.ArticleHandle)))
 	mux.Handle("GET /article/{idx}/edit", BasicAuth(http.HandlerFunc(app.EditArticleHandle)))
 	mux.HandleFunc("GET /article/{idx}", app.ArticleHandle)
 

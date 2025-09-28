@@ -6,5 +6,5 @@
 <h2>Articles</h2>
 {{range .Data}}
 <h3><a href="/article/{{.ID}}">{{.Title}}</a></h3>
-<p>{{.Date}}</p>
+<time>{{.Date.Format "02 Jan 06 15:04 MST" }}</time>
 {{end}} {{end}}
